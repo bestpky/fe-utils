@@ -1,0 +1,34 @@
+{
+    "name": "@pky/fe-utils",
+    "version": "0.0.1",
+    "description": "前端常用工具方法库",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "yarn clear && yarn build:ts && yarn build:babel && yarn type",
+        "build:ts": "tsc",
+        "build:babel": "babel .cache/tsc --out-dir dist",
+        "clear": "rimraf dist && rimraf .cache/tsc",
+        "type": "cpx \".cache/tsc/**/*.d.ts\" dist",
+        "pub": "npm publish --access public"
+    },
+    "keywords": [
+        "typescript",
+        "utils"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bestpky/fe-utils.git"
+    },
+    "author": "bestpky",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/cli": "^7.14.3",
+        "@babel/core": "^7.14.3",
+        "@babel/plugin-transform-runtime": "^7.14.3",
+        "@babel/preset-env": "^7.14.4",
+        "cpx": "^1.5.0",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.3.2"
+    },
+    "dependencies": {}
+}
