@@ -77,4 +77,4 @@ function selectFiles(...args: any[]): Promise<File[]> {
         fileInput.addEventListener('change', confirm)
     })
 }
-export default selectFiles
+export { selectFiles }
