@@ -1,6 +1,6 @@
 import { isArrayLike } from './is-array-like'
 
-type PlainObject<T = any> = {
+type PlainObject<T> = {
     [key in string | number]: T
 }
 

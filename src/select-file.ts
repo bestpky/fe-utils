@@ -1,4 +1,4 @@
-import delay from './delay'
+import {delay} from './delay'
 
 type Options = { types?: string[] | null; timeout?: number; folder?: boolean; noCancel?: boolean; multiple?: boolean }
 const defaultOptions = {
