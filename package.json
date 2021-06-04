@@ -3,9 +3,6 @@
     "version": "0.1.5",
     "description": "前端常用工具方法库",
     "main": "dist/index.js",
-    "files": [
-        "dist"
-    ],
     "scripts": {
         "build": "yarn clear && yarn build:ts && yarn build:babel && yarn type",
         "build:ts": "tsc",
