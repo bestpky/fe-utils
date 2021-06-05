@@ -1,4 +1,5 @@
 import { remove } from './remove'
+import { isEmpty } from './is-empty'
 
 export type Callback = (rect: DOMRect, oldRect: DOMRect) => unknown
 
@@ -35,7 +36,7 @@ export function resizeWatch(el: Element, callback: Callback) {
     ro.observe(el)
     return () => {
         remove(fns, (cb: Callback) => cb === callback)
-        if (!fns.length) {
+        if (isEmpty(fns)) {
             elAndCbMap.delete(el)
             ro.unobserve(el)
         }
