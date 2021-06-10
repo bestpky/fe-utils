@@ -9,12 +9,17 @@ export class EventEmitter {
         this.events = {}
     }
     on(type: string, cb: Function) {
-        this.events[type] ? this.events[type].push(cb) : (this.events[type] = [cb])
+        if (!this.events[type]) {
+            this.events[type] = [cb]
+        } else if (!this.events[type].includes(cb)) {
+            this.events[type].push(cb)
+        }
         return this
     }
     emit(type: string, ...rest: Function[]) {
-        if (this.events[type]) {
-            this.events[type].forEach(cb => {
+        const fns = this.events[type]
+        if (fns) {
+            fns.forEach(cb => {
                 cb(...rest)
             })
         }
