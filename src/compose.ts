@@ -1,8 +1,6 @@
 export function compose(...fns: Function[]) {
   return function(...arg: unknown[]){
-    console.log(arg)
       return fns.reduce((acc, cur) => {
-        console.log(acc, cur)
           // 第一次acc是函数，之后是结果，所以要加个判断
           return typeof acc === 'function' ? cur(acc(...arg)) : cur(acc)
       })
