@@ -9,3 +9,9 @@ export function flatten(arr: any[]) {
     }
     return arr
 }
+
+// export function flatten(arr: any[]) {
+//     return arr.reduce((prev, cur) => {
+//         return prev.concat(cur instanceof Array ? flatten(cur) : cur)
+//     }, [])
+// }
