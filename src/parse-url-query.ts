@@ -20,10 +20,9 @@ export function parseUrlQuery(url: string) {
     queryArr.forEach(param => {
         if (/=/.test(param)) {
             // 处理有 value 的参数
-            const [key, val] = param.split('=') // 分割 key 和 value
-            let value
-            value = decodeURIComponent(val) // 解码
-            value = /^\d+$/.test(val) ? parseFloat(val) : val // 判断是否转为数字
+            let [key, val] = param.split('=') // 分割 key 和 value
+            let value: string | number = decodeURIComponent(val) // 解码
+            value = /^\d+$/.test(value) ? parseFloat(value) : value // 判断是否转为数字
 
             if (result.hasOwnProperty(key)) {
                 // 如果对象有 key，则添加一个值
