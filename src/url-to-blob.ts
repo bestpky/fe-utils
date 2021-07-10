@@ -12,7 +12,7 @@ import { loadImage } from './load-image'
 export async function urlToBlob(url: string, { withCredentials = false, imgThroughXhr = true } = {}) {
     const _isImage = isImage(url)
     if (!_isImage || imgThroughXhr) {
-        return new Promise((resolve, reject) => {
+        return new Promise<Blob>((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open('GET', url, true)
             if (!isObjectUrl(url) && !isDataUrl(url)) {

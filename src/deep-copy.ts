@@ -19,6 +19,7 @@ export function deepClone(target: Obj, map = new WeakMap()) {
             if (typeof target !== 'function') {
                 for (const prop in target) {
                     if (target.hasOwnProperty(prop)) {
+                        // 避免复制到原型链上的同名属性
                         const value = target[prop] as Obj
                         Reflect.set(cloneTarget, prop, deepClone(value, map))
                     }
