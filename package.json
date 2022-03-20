@@ -8,6 +8,12 @@
     "husky": "husky install",
     "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
   },
+  "files": [
+    "lib",
+    "package.json",
+    "README.md",
+    "docs"
+  ],
   "keywords": [
     "typescript",
     "utils",
@@ -16,6 +22,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bestpky/fe-utils.git"
+  },
+  "lint-staged": {
+    "**/*.{js,ts}": "eslint --cache --fix",
+    "**/*.{js,jsx,ts,tsx,html,json,less,scss,css,md}": "prettier --write"
   },
   "author": "bestpky",
   "license": "ISC",
