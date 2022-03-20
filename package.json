@@ -1,6 +1,6 @@
 {
   "name": "@pky/fe-utils",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "fe utils and React hooks.",
   "main": "./lib/index.js",
   "scripts": {
