@@ -30,7 +30,7 @@ export async function urlToBlob(url: string, { withCredentials = false, imgThrou
       xhr.send()
     })
   }
-  const img = await loadImage(url, { crossOrigin: withCredentials ? 'use-credentials' : 'anonymous' })
+  const img = await loadImage(url)
   return new Promise<Blob>((resolve, reject) => {
     const c = document.createElement('canvas')
     c.width = img.naturalWidth
