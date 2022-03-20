@@ -1,35 +1,45 @@
 {
-    "name": "@pky/fe-utils",
-    "version": "0.1.10",
-    "description": "前端常用工具方法库",
-    "main": "dist/index.js",
-    "scripts": {
-        "build": "yarn clear && yarn build:ts && yarn build:babel && yarn type",
-        "build:ts": "tsc",
-        "build:babel": "babel .cache/tsc --out-dir dist",
-        "clear": "rimraf dist && rimraf .cache/tsc",
-        "type": "cpx \".cache/tsc/**/*.d.ts\" dist",
-        "pub": "npm publish --access public"
-    },
-    "keywords": [
-        "typescript",
-        "utils"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/bestpky/fe-utils.git"
-    },
-    "author": "bestpky",
-    "license": "ISC",
-    "devDependencies": {
-        "@babel/cli": "^7.14.3",
-        "@babel/core": "^7.14.3",
-        "@babel/plugin-transform-runtime": "^7.14.3",
-        "@babel/preset-env": "^7.14.4",
-        "@types/node": "^15.12.1",
-        "cpx": "^1.5.0",
-        "rimraf": "^3.0.2",
-        "typescript": "^4.3.2"
-    },
-    "dependencies": {}
+  "name": "@pky/fe-utils",
+  "version": "0.1.10",
+  "description": "fe utils and React hooks.",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "rimraf lib && ./node_modules/rollup/dist/bin/rollup -c",
+    "husky": "husky install",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
+  },
+  "keywords": [
+    "typescript",
+    "utils",
+    "react hooks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bestpky/fe-utils.git"
+  },
+  "author": "bestpky",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^13.2.0",
+    "@commitlint/config-conventional": "^13.2.0",
+    "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@types/react": "^17.0.27",
+    "@types/react-dom": "^17.0.9",
+    "husky": "^7.0.2",
+    "jsdoc": "^3.6.7",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.60.2",
+    "throttle-debounce": "^3.0.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "@juggle/resize-observer": "^3.3.1"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
 }

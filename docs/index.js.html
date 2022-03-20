@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: index.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: index.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var react = require('react');
+var reactDom = require('react-dom');
+
+var cjs = {};
+
+Object.defineProperty(cjs, '__esModule', { value: true });
+
+/* eslint-disable no-undefined,no-param-reassign,no-shadow */
+
+/**
+ * Throttle execution of a function. Especially useful for rate limiting
+ * execution of handlers on events like resize and scroll.
+ *
+ * @param  {number}    delay -          A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param  {boolean}   [noTrailing] -   Optional, defaults to false. If noTrailing is true, callback will only execute every `delay` milliseconds while the
+ *                                    throttled-function is being called. If noTrailing is false or unspecified, callback will be executed one final time
+ *                                    after the last throttled-function call. (After the throttled-function has not been called for `delay` milliseconds,
+ *                                    the internal counter is reset).
+ * @param  {Function}  callback -       A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                    to `callback` when the throttled-function is executed.
+ * @param  {boolean}   [debounceMode] - If `debounceMode` is true (at begin), schedule `clear` to execute after `delay` ms. If `debounceMode` is false (at end),
+ *                                    schedule `callback` to execute after `delay` ms.
+ *
+ * @returns {Function}  A new, throttled, function.
+ */
+function throttle (delay, noTrailing, callback, debounceMode) {
+  /*
+   * After wrapper has stopped being called, this timeout ensures that
+   * `callback` is executed at the proper times in `throttle` and `end`
+   * debounce modes.
+   */
+  var timeoutID;
+  var cancelled = false; // Keep track of the last time `callback` was executed.
+
+  var lastExec = 0; // Function to clear existing timeout
+
+  function clearExistingTimeout() {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+  } // Function to cancel next exec
+
+
+  function cancel() {
+    clearExistingTimeout();
+    cancelled = true;
+  } // `noTrailing` defaults to falsy.
+
+
+  if (typeof noTrailing !== 'boolean') {
+    debounceMode = callback;
+    callback = noTrailing;
+    noTrailing = undefined;
+  }
+  /*
+   * The `wrapper` function encapsulates all of the throttling / debouncing
+   * functionality and when executed will limit the rate at which `callback`
+   * is executed.
+   */
+
+
+  function wrapper() {
+    for (var _len = arguments.length, arguments_ = new Array(_len), _key = 0; _key &lt; _len; _key++) {
+      arguments_[_key] = arguments[_key];
+    }
+
+    var self = this;
+    var elapsed = Date.now() - lastExec;
+
+    if (cancelled) {
+      return;
+    } // Execute `callback` and update the `lastExec` timestamp.
+
+
+    function exec() {
+      lastExec = Date.now();
+      callback.apply(self, arguments_);
+    }
+    /*
+     * If `debounceMode` is true (at begin) this is used to clear the flag
+     * to allow future `callback` executions.
+     */
+
+
+    function clear() {
+      timeoutID = undefined;
+    }
+
+    if (debounceMode &amp;&amp; !timeoutID) {
+      /*
+       * Since `wrapper` is being called for the first time and
+       * `debounceMode` is true (at begin), execute `callback`.
+       */
+      exec();
+    }
+
+    clearExistingTimeout();
+
+    if (debounceMode === undefined &amp;&amp; elapsed > delay) {
+      /*
+       * In throttle mode, if `delay` time has been exceeded, execute
+       * `callback`.
+       */
+      exec();
+    } else if (noTrailing !== true) {
+      /*
+       * In trailing throttle mode, since `delay` time has not been
+       * exceeded, schedule `callback` to execute `delay` ms after most
+       * recent execution.
+       *
+       * If `debounceMode` is true (at begin), schedule `clear` to execute
+       * after `delay` ms.
+       *
+       * If `debounceMode` is false (at end), schedule `callback` to
+       * execute after `delay` ms.
+       */
+      timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
+    }
+  }
+
+  wrapper.cancel = cancel; // Return the wrapper function.
+
+  return wrapper;
+}
+
+/* eslint-disable no-undefined */
+/**
+ * Debounce execution of a function. Debouncing, unlike throttling,
+ * guarantees that a function is only executed a single time, either at the
+ * very beginning of a series of calls, or at the very end.
+ *
+ * @param  {number}   delay -         A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param  {boolean}  [atBegin] -     Optional, defaults to false. If atBegin is false or unspecified, callback will only be executed `delay` milliseconds
+ *                                  after the last debounced-function call. If atBegin is true, callback will be executed only at the first debounced-function call.
+ *                                  (After the throttled-function has not been called for `delay` milliseconds, the internal counter is reset).
+ * @param  {Function} callback -      A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                  to `callback` when the debounced-function is executed.
+ *
+ * @returns {Function} A new, debounced function.
+ */
+
+function debounce (delay, atBegin, callback) {
+  return callback === undefined ? throttle(delay, atBegin, false) : throttle(delay, callback, atBegin !== false);
+}
+
+var debounce_1 = cjs.debounce = debounce;
+var throttle_1 = cjs.throttle = throttle;
+
+/**
+ * 滚动到底部
+ * @param {Function} action 执行的函数
+ * @returns {Array} [ref, 是否ready]
+ */
+const useBottom = (action) => {
+    const containerRef = react.useRef(null);
+    const [ready, setReady] = react.useState(false);
+    react.useEffect(() => {
+        function doInBottom(e) {
+            const { scrollTop, clientHeight, scrollHeight } = e.target;
+            if (scrollTop + clientHeight + 10 > scrollHeight) {
+                return action();
+            }
+        }
+        const debounceDoInBottom = debounce_1(300, e => {
+            doInBottom(e);
+        });
+        const handleMouseEnter = () => setReady(true);
+        const dom = containerRef.current;
+        if (dom) {
+            dom.addEventListener('scroll', debounceDoInBottom);
+            dom.addEventListener('mouseenter', handleMouseEnter);
+        }
+        return () => {
+            if (dom) {
+                dom.removeEventListener('scroll', debounceDoInBottom);
+                dom.removeEventListener('mouseenter', handleMouseEnter);
+            }
+        };
+    }, [action]);
+    return [containerRef, ready];
+};
+
+/**
+ * createPortal
+ * @returns {Function}
+ */
+const useCreatePortal = () => {
+    const wrapperRef = react.useRef(null);
+    if (wrapperRef.current === null &amp;&amp; typeof document !== 'undefined') {
+        const div = document.createElement('div');
+        div.setAttribute('data-body-portal', '');
+        wrapperRef.current = div;
+    }
+    react.useLayoutEffect(() => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper || typeof document === 'undefined') {
+            return;
+        }
+        document.body.appendChild(wrapper);
+        return () => {
+            document.body.removeChild(wrapper);
+        };
+    }, []);
+    return (children) => wrapperRef.current &amp;&amp; reactDom.createPortal(children, wrapperRef.current);
+};
+
+/**
+ * 使用第三方脚本
+ * @param {string} url url
+ * @param {Function} cb 回调
+ */
+const useScript = (url, cb) => {
+    react.useEffect(() => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+        script.onload = () => {
+            cb === null || cb === void 0 ? void 0 : cb();
+        };
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, [url, cb]);
+};
+
+var resizeObservers = [];
+
+var hasActiveObservations = function () {
+    return resizeObservers.some(function (ro) { return ro.activeTargets.length > 0; });
+};
+
+var hasSkippedObservations = function () {
+    return resizeObservers.some(function (ro) { return ro.skippedTargets.length > 0; });
+};
+
+var msg = 'ResizeObserver loop completed with undelivered notifications.';
+var deliverResizeLoopError = function () {
+    var event;
+    if (typeof ErrorEvent === 'function') {
+        event = new ErrorEvent('error', {
+            message: msg
+        });
+    }
+    else {
+        event = document.createEvent('Event');
+        event.initEvent('error', false, false);
+        event.message = msg;
+    }
+    window.dispatchEvent(event);
+};
+
+var ResizeObserverBoxOptions;
+(function (ResizeObserverBoxOptions) {
+    ResizeObserverBoxOptions["BORDER_BOX"] = "border-box";
+    ResizeObserverBoxOptions["CONTENT_BOX"] = "content-box";
+    ResizeObserverBoxOptions["DEVICE_PIXEL_CONTENT_BOX"] = "device-pixel-content-box";
+})(ResizeObserverBoxOptions || (ResizeObserverBoxOptions = {}));
+
+var freeze = function (obj) { return Object.freeze(obj); };
+
+var ResizeObserverSize = (function () {
+    function ResizeObserverSize(inlineSize, blockSize) {
+        this.inlineSize = inlineSize;
+        this.blockSize = blockSize;
+        freeze(this);
+    }
+    return ResizeObserverSize;
+}());
+
+var DOMRectReadOnly = (function () {
+    function DOMRectReadOnly(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.top = this.y;
+        this.left = this.x;
+        this.bottom = this.top + this.height;
+        this.right = this.left + this.width;
+        return freeze(this);
+    }
+    DOMRectReadOnly.prototype.toJSON = function () {
+        var _a = this, x = _a.x, y = _a.y, top = _a.top, right = _a.right, bottom = _a.bottom, left = _a.left, width = _a.width, height = _a.height;
+        return { x: x, y: y, top: top, right: right, bottom: bottom, left: left, width: width, height: height };
+    };
+    DOMRectReadOnly.fromRect = function (rectangle) {
+        return new DOMRectReadOnly(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    };
+    return DOMRectReadOnly;
+}());
+
+var isSVG = function (target) { return target instanceof SVGElement &amp;&amp; 'getBBox' in target; };
+var isHidden = function (target) {
+    if (isSVG(target)) {
+        var _a = target.getBBox(), width = _a.width, height = _a.height;
+        return !width &amp;&amp; !height;
+    }
+    var _b = target, offsetWidth = _b.offsetWidth, offsetHeight = _b.offsetHeight;
+    return !(offsetWidth || offsetHeight || target.getClientRects().length);
+};
+var isElement = function (obj) {
+    var _a, _b;
+    if (obj instanceof Element) {
+        return true;
+    }
+    var scope = (_b = (_a = obj) === null || _a === void 0 ? void 0 : _a.ownerDocument) === null || _b === void 0 ? void 0 : _b.defaultView;
+    return !!(scope &amp;&amp; obj instanceof scope.Element);
+};
+var isReplacedElement = function (target) {
+    switch (target.tagName) {
+        case 'INPUT':
+            if (target.type !== 'image') {
+                break;
+            }
+        case 'VIDEO':
+        case 'AUDIO':
+        case 'EMBED':
+        case 'OBJECT':
+        case 'CANVAS':
+        case 'IFRAME':
+        case 'IMG':
+            return true;
+    }
+    return false;
+};
+
+var global = typeof window !== 'undefined' ? window : {};
+
+var cache = new WeakMap();
+var scrollRegexp = /auto|scroll/;
+var verticalRegexp = /^tb|vertical/;
+var IE = (/msie|trident/i).test(global.navigator &amp;&amp; global.navigator.userAgent);
+var parseDimension = function (pixel) { return parseFloat(pixel || '0'); };
+var size = function (inlineSize, blockSize, switchSizes) {
+    if (inlineSize === void 0) { inlineSize = 0; }
+    if (blockSize === void 0) { blockSize = 0; }
+    if (switchSizes === void 0) { switchSizes = false; }
+    return new ResizeObserverSize((switchSizes ? blockSize : inlineSize) || 0, (switchSizes ? inlineSize : blockSize) || 0);
+};
+var zeroBoxes = freeze({
+    devicePixelContentBoxSize: size(),
+    borderBoxSize: size(),
+    contentBoxSize: size(),
+    contentRect: new DOMRectReadOnly(0, 0, 0, 0)
+});
+var calculateBoxSizes = function (target, forceRecalculation) {
+    if (forceRecalculation === void 0) { forceRecalculation = false; }
+    if (cache.has(target) &amp;&amp; !forceRecalculation) {
+        return cache.get(target);
+    }
+    if (isHidden(target)) {
+        cache.set(target, zeroBoxes);
+        return zeroBoxes;
+    }
+    var cs = getComputedStyle(target);
+    var svg = isSVG(target) &amp;&amp; target.ownerSVGElement &amp;&amp; target.getBBox();
+    var removePadding = !IE &amp;&amp; cs.boxSizing === 'border-box';
+    var switchSizes = verticalRegexp.test(cs.writingMode || '');
+    var canScrollVertically = !svg &amp;&amp; scrollRegexp.test(cs.overflowY || '');
+    var canScrollHorizontally = !svg &amp;&amp; scrollRegexp.test(cs.overflowX || '');
+    var paddingTop = svg ? 0 : parseDimension(cs.paddingTop);
+    var paddingRight = svg ? 0 : parseDimension(cs.paddingRight);
+    var paddingBottom = svg ? 0 : parseDimension(cs.paddingBottom);
+    var paddingLeft = svg ? 0 : parseDimension(cs.paddingLeft);
+    var borderTop = svg ? 0 : parseDimension(cs.borderTopWidth);
+    var borderRight = svg ? 0 : parseDimension(cs.borderRightWidth);
+    var borderBottom = svg ? 0 : parseDimension(cs.borderBottomWidth);
+    var borderLeft = svg ? 0 : parseDimension(cs.borderLeftWidth);
+    var horizontalPadding = paddingLeft + paddingRight;
+    var verticalPadding = paddingTop + paddingBottom;
+    var horizontalBorderArea = borderLeft + borderRight;
+    var verticalBorderArea = borderTop + borderBottom;
+    var horizontalScrollbarThickness = !canScrollHorizontally ? 0 : target.offsetHeight - verticalBorderArea - target.clientHeight;
+    var verticalScrollbarThickness = !canScrollVertically ? 0 : target.offsetWidth - horizontalBorderArea - target.clientWidth;
+    var widthReduction = removePadding ? horizontalPadding + horizontalBorderArea : 0;
+    var heightReduction = removePadding ? verticalPadding + verticalBorderArea : 0;
+    var contentWidth = svg ? svg.width : parseDimension(cs.width) - widthReduction - verticalScrollbarThickness;
+    var contentHeight = svg ? svg.height : parseDimension(cs.height) - heightReduction - horizontalScrollbarThickness;
+    var borderBoxWidth = contentWidth + horizontalPadding + verticalScrollbarThickness + horizontalBorderArea;
+    var borderBoxHeight = contentHeight + verticalPadding + horizontalScrollbarThickness + verticalBorderArea;
+    var boxes = freeze({
+        devicePixelContentBoxSize: size(Math.round(contentWidth * devicePixelRatio), Math.round(contentHeight * devicePixelRatio), switchSizes),
+        borderBoxSize: size(borderBoxWidth, borderBoxHeight, switchSizes),
+        contentBoxSize: size(contentWidth, contentHeight, switchSizes),
+        contentRect: new DOMRectReadOnly(paddingLeft, paddingTop, contentWidth, contentHeight)
+    });
+    cache.set(target, boxes);
+    return boxes;
+};
+var calculateBoxSize = function (target, observedBox, forceRecalculation) {
+    var _a = calculateBoxSizes(target, forceRecalculation), borderBoxSize = _a.borderBoxSize, contentBoxSize = _a.contentBoxSize, devicePixelContentBoxSize = _a.devicePixelContentBoxSize;
+    switch (observedBox) {
+        case ResizeObserverBoxOptions.DEVICE_PIXEL_CONTENT_BOX:
+            return devicePixelContentBoxSize;
+        case ResizeObserverBoxOptions.BORDER_BOX:
+            return borderBoxSize;
+        default:
+            return contentBoxSize;
+    }
+};
+
+var ResizeObserverEntry = (function () {
+    function ResizeObserverEntry(target) {
+        var boxes = calculateBoxSizes(target);
+        this.target = target;
+        this.contentRect = boxes.contentRect;
+        this.borderBoxSize = freeze([boxes.borderBoxSize]);
+        this.contentBoxSize = freeze([boxes.contentBoxSize]);
+        this.devicePixelContentBoxSize = freeze([boxes.devicePixelContentBoxSize]);
+    }
+    return ResizeObserverEntry;
+}());
+
+var calculateDepthForNode = function (node) {
+    if (isHidden(node)) {
+        return Infinity;
+    }
+    var depth = 0;
+    var parent = node.parentNode;
+    while (parent) {
+        depth += 1;
+        parent = parent.parentNode;
+    }
+    return depth;
+};
+
+var broadcastActiveObservations = function () {
+    var shallowestDepth = Infinity;
+    var callbacks = [];
+    resizeObservers.forEach(function processObserver(ro) {
+        if (ro.activeTargets.length === 0) {
+            return;
+        }
+        var entries = [];
+        ro.activeTargets.forEach(function processTarget(ot) {
+            var entry = new ResizeObserverEntry(ot.target);
+            var targetDepth = calculateDepthForNode(ot.target);
+            entries.push(entry);
+            ot.lastReportedSize = calculateBoxSize(ot.target, ot.observedBox);
+            if (targetDepth &lt; shallowestDepth) {
+                shallowestDepth = targetDepth;
+            }
+        });
+        callbacks.push(function resizeObserverCallback() {
+            ro.callback.call(ro.observer, entries, ro.observer);
+        });
+        ro.activeTargets.splice(0, ro.activeTargets.length);
+    });
+    for (var _i = 0, callbacks_1 = callbacks; _i &lt; callbacks_1.length; _i++) {
+        var callback = callbacks_1[_i];
+        callback();
+    }
+    return shallowestDepth;
+};
+
+var gatherActiveObservationsAtDepth = function (depth) {
+    resizeObservers.forEach(function processObserver(ro) {
+        ro.activeTargets.splice(0, ro.activeTargets.length);
+        ro.skippedTargets.splice(0, ro.skippedTargets.length);
+        ro.observationTargets.forEach(function processTarget(ot) {
+            if (ot.isActive()) {
+                if (calculateDepthForNode(ot.target) > depth) {
+                    ro.activeTargets.push(ot);
+                }
+                else {
+                    ro.skippedTargets.push(ot);
+                }
+            }
+        });
+    });
+};
+
+var process = function () {
+    var depth = 0;
+    gatherActiveObservationsAtDepth(depth);
+    while (hasActiveObservations()) {
+        depth = broadcastActiveObservations();
+        gatherActiveObservationsAtDepth(depth);
+    }
+    if (hasSkippedObservations()) {
+        deliverResizeLoopError();
+    }
+    return depth > 0;
+};
+
+var trigger;
+var callbacks = [];
+var notify = function () { return callbacks.splice(0).forEach(function (cb) { return cb(); }); };
+var queueMicroTask = function (callback) {
+    if (!trigger) {
+        var toggle_1 = 0;
+        var el_1 = document.createTextNode('');
+        var config = { characterData: true };
+        new MutationObserver(function () { return notify(); }).observe(el_1, config);
+        trigger = function () { el_1.textContent = "" + (toggle_1 ? toggle_1-- : toggle_1++); };
+    }
+    callbacks.push(callback);
+    trigger();
+};
+
+var queueResizeObserver = function (cb) {
+    queueMicroTask(function ResizeObserver() {
+        requestAnimationFrame(cb);
+    });
+};
+
+var watching = 0;
+var isWatching = function () { return !!watching; };
+var CATCH_PERIOD = 250;
+var observerConfig = { attributes: true, characterData: true, childList: true, subtree: true };
+var events = [
+    'resize',
+    'load',
+    'transitionend',
+    'animationend',
+    'animationstart',
+    'animationiteration',
+    'keyup',
+    'keydown',
+    'mouseup',
+    'mousedown',
+    'mouseover',
+    'mouseout',
+    'blur',
+    'focus'
+];
+var time = function (timeout) {
+    if (timeout === void 0) { timeout = 0; }
+    return Date.now() + timeout;
+};
+var scheduled = false;
+var Scheduler = (function () {
+    function Scheduler() {
+        var _this = this;
+        this.stopped = true;
+        this.listener = function () { return _this.schedule(); };
+    }
+    Scheduler.prototype.run = function (timeout) {
+        var _this = this;
+        if (timeout === void 0) { timeout = CATCH_PERIOD; }
+        if (scheduled) {
+            return;
+        }
+        scheduled = true;
+        var until = time(timeout);
+        queueResizeObserver(function () {
+            var elementsHaveResized = false;
+            try {
+                elementsHaveResized = process();
+            }
+            finally {
+                scheduled = false;
+                timeout = until - time();
+                if (!isWatching()) {
+                    return;
+                }
+                if (elementsHaveResized) {
+                    _this.run(1000);
+                }
+                else if (timeout > 0) {
+                    _this.run(timeout);
+                }
+                else {
+                    _this.start();
+                }
+            }
+        });
+    };
+    Scheduler.prototype.schedule = function () {
+        this.stop();
+        this.run();
+    };
+    Scheduler.prototype.observe = function () {
+        var _this = this;
+        var cb = function () { return _this.observer &amp;&amp; _this.observer.observe(document.body, observerConfig); };
+        document.body ? cb() : global.addEventListener('DOMContentLoaded', cb);
+    };
+    Scheduler.prototype.start = function () {
+        var _this = this;
+        if (this.stopped) {
+            this.stopped = false;
+            this.observer = new MutationObserver(this.listener);
+            this.observe();
+            events.forEach(function (name) { return global.addEventListener(name, _this.listener, true); });
+        }
+    };
+    Scheduler.prototype.stop = function () {
+        var _this = this;
+        if (!this.stopped) {
+            this.observer &amp;&amp; this.observer.disconnect();
+            events.forEach(function (name) { return global.removeEventListener(name, _this.listener, true); });
+            this.stopped = true;
+        }
+    };
+    return Scheduler;
+}());
+var scheduler = new Scheduler();
+var updateCount = function (n) {
+    !watching &amp;&amp; n > 0 &amp;&amp; scheduler.start();
+    watching += n;
+    !watching &amp;&amp; scheduler.stop();
+};
+
+var skipNotifyOnElement = function (target) {
+    return !isSVG(target)
+        &amp;&amp; !isReplacedElement(target)
+        &amp;&amp; getComputedStyle(target).display === 'inline';
+};
+var ResizeObservation = (function () {
+    function ResizeObservation(target, observedBox) {
+        this.target = target;
+        this.observedBox = observedBox || ResizeObserverBoxOptions.CONTENT_BOX;
+        this.lastReportedSize = {
+            inlineSize: 0,
+            blockSize: 0
+        };
+    }
+    ResizeObservation.prototype.isActive = function () {
+        var size = calculateBoxSize(this.target, this.observedBox, true);
+        if (skipNotifyOnElement(this.target)) {
+            this.lastReportedSize = size;
+        }
+        if (this.lastReportedSize.inlineSize !== size.inlineSize
+            || this.lastReportedSize.blockSize !== size.blockSize) {
+            return true;
+        }
+        return false;
+    };
+    return ResizeObservation;
+}());
+
+var ResizeObserverDetail = (function () {
+    function ResizeObserverDetail(resizeObserver, callback) {
+        this.activeTargets = [];
+        this.skippedTargets = [];
+        this.observationTargets = [];
+        this.observer = resizeObserver;
+        this.callback = callback;
+    }
+    return ResizeObserverDetail;
+}());
+
+var observerMap = new WeakMap();
+var getObservationIndex = function (observationTargets, target) {
+    for (var i = 0; i &lt; observationTargets.length; i += 1) {
+        if (observationTargets[i].target === target) {
+            return i;
+        }
+    }
+    return -1;
+};
+var ResizeObserverController = (function () {
+    function ResizeObserverController() {
+    }
+    ResizeObserverController.connect = function (resizeObserver, callback) {
+        var detail = new ResizeObserverDetail(resizeObserver, callback);
+        observerMap.set(resizeObserver, detail);
+    };
+    ResizeObserverController.observe = function (resizeObserver, target, options) {
+        var detail = observerMap.get(resizeObserver);
+        var firstObservation = detail.observationTargets.length === 0;
+        if (getObservationIndex(detail.observationTargets, target) &lt; 0) {
+            firstObservation &amp;&amp; resizeObservers.push(detail);
+            detail.observationTargets.push(new ResizeObservation(target, options &amp;&amp; options.box));
+            updateCount(1);
+            scheduler.schedule();
+        }
+    };
+    ResizeObserverController.unobserve = function (resizeObserver, target) {
+        var detail = observerMap.get(resizeObserver);
+        var index = getObservationIndex(detail.observationTargets, target);
+        var lastObservation = detail.observationTargets.length === 1;
+        if (index >= 0) {
+            lastObservation &amp;&amp; resizeObservers.splice(resizeObservers.indexOf(detail), 1);
+            detail.observationTargets.splice(index, 1);
+            updateCount(-1);
+        }
+    };
+    ResizeObserverController.disconnect = function (resizeObserver) {
+        var _this = this;
+        var detail = observerMap.get(resizeObserver);
+        detail.observationTargets.slice().forEach(function (ot) { return _this.unobserve(resizeObserver, ot.target); });
+        detail.activeTargets.splice(0, detail.activeTargets.length);
+    };
+    return ResizeObserverController;
+}());
+
+var ResizeObserver = (function () {
+    function ResizeObserver(callback) {
+        if (arguments.length === 0) {
+            throw new TypeError("Failed to construct 'ResizeObserver': 1 argument required, but only 0 present.");
+        }
+        if (typeof callback !== 'function') {
+            throw new TypeError("Failed to construct 'ResizeObserver': The callback provided as parameter 1 is not a function.");
+        }
+        ResizeObserverController.connect(this, callback);
+    }
+    ResizeObserver.prototype.observe = function (target, options) {
+        if (arguments.length === 0) {
+            throw new TypeError("Failed to execute 'observe' on 'ResizeObserver': 1 argument required, but only 0 present.");
+        }
+        if (!isElement(target)) {
+            throw new TypeError("Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element");
+        }
+        ResizeObserverController.observe(this, target, options);
+    };
+    ResizeObserver.prototype.unobserve = function (target) {
+        if (arguments.length === 0) {
+            throw new TypeError("Failed to execute 'unobserve' on 'ResizeObserver': 1 argument required, but only 0 present.");
+        }
+        if (!isElement(target)) {
+            throw new TypeError("Failed to execute 'unobserve' on 'ResizeObserver': parameter 1 is not of type 'Element");
+        }
+        ResizeObserverController.unobserve(this, target);
+    };
+    ResizeObserver.prototype.disconnect = function () {
+        ResizeObserverController.disconnect(this);
+    };
+    ResizeObserver.toString = function () {
+        return 'function ResizeObserver () { [polyfill code] }';
+    };
+    return ResizeObserver;
+}());
+
+/**
+ * 从数组里去掉一个元素
+ * @template T
+ * @param {T[]} from 数组
+ * @param {T} item 元素
+ * @returns {number?} 如果执行了删除，则返回index
+ */
+function remove(from, item) {
+    const index = typeof item === "function" ? from.findIndex(item) : from.indexOf(item);
+    if (index !== -1) {
+        from.splice(index, 1);
+        return index;
+    }
+    return undefined;
+}
+
+const elAndCbMap = new Map();
+const ro = new ResizeObserver(entries => {
+    const elAndCbEntries = Array.from(elAndCbMap.entries());
+    entries.forEach(entry => {
+        const i = elAndCbEntries.findIndex(([el]) => el === entry.target);
+        if (i !== -1) {
+            const [, item] = elAndCbEntries[i];
+            const { contentRect: oldRect, callbacks: fns } = item;
+            item.contentRect = entry.contentRect;
+            fns.forEach(fn => {
+                fn(item.contentRect, oldRect);
+            });
+        }
+    });
+});
+/**
+ * 监听元素尺寸改变
+ * @template Callback
+ * @param {Element} el 元素
+ * @param {Callback} callback 回调
+ * @returns {Function} 取消监听函数
+ */
+function resizeWatch(el, callback) {
+    var _a;
+    const item = (_a = elAndCbMap.get(el)) !== null &amp;&amp; _a !== void 0 ? _a : {
+        contentRect: el.getBoundingClientRect(),
+        callbacks: []
+    };
+    const fns = item.callbacks;
+    fns.push(callback);
+    elAndCbMap.set(el, item);
+    ro.observe(el);
+    return () => {
+        remove(fns, (cb) => cb === callback);
+        if (fns.length === 0) {
+            elAndCbMap.delete(el);
+            ro.unobserve(el);
+        }
+    };
+}
+
+/**
+ * 监听元素尺寸变化
+ * @returns {Array} [React.RefObject&lt;T>, Size]
+ */
+function useWatchResize() {
+    const elRef = react.useRef(null);
+    const [size, setSize] = react.useState({
+        width: 0,
+        height: 0
+    });
+    react.useEffect(() => {
+        let isUnmount = false;
+        let cancelFn;
+        if (elRef.current) {
+            cancelFn = resizeWatch(elRef.current, ({ width, height }) => {
+                !isUnmount &amp;&amp; setSize({ width, height });
+            });
+        }
+        return () => {
+            isUnmount = true;
+            cancelFn &amp;&amp; cancelFn();
+        };
+    }, [elRef]);
+    return [elRef, size];
+}
+
+/**
+ * 监听视口尺寸变化
+ * @returns {Object} 宽高
+ */
+function useWindowResize() {
+    const isClient = typeof window === 'object';
+    const getSize = react.useCallback(() => {
+        return {
+            width: isClient ? window.innerWidth : 0,
+            height: isClient ? window.innerHeight : 0
+        };
+    }, [isClient]);
+    const [windowSize, setWindowSize] = react.useState(getSize);
+    react.useEffect(() => {
+        if (!isClient) {
+            return;
+        }
+        function handleResize() {
+            setWindowSize(getSize());
+        }
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [isClient, getSize]);
+    return windowSize;
+}
+
+const initialPos = { x: 0, y: 0 };
+/**
+ * 获取鼠标位置和target data-属性
+ * @param dom 元素
+ * @param dataKey data-属性
+ * @returns
+ */
+const useMousePosition = (dom, dataKey) => {
+    const [pos, setPos] = react.useState(initialPos);
+    const [data, setData] = react.useState();
+    react.useEffect(() => {
+        if (!dom) {
+            setPos(initialPos);
+            setData(undefined);
+        }
+        const getMousePos = (e) => {
+            if (e.target instanceof HTMLElement) {
+                const scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+                const scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+                const x = e.pageX || e.clientX + scrollX;
+                const y = e.pageY || e.clientY + scrollY;
+                setPos({ x, y });
+                if (dataKey &amp;&amp; typeof e.target.dataset[dataKey] === 'string') {
+                    const obj = JSON.parse(e.target.dataset[dataKey]);
+                    setData(obj);
+                }
+            }
+        };
+        dom === null || dom === void 0 ? void 0 : dom.addEventListener('mousemove', getMousePos);
+        return () => dom === null || dom === void 0 ? void 0 : dom.removeEventListener('mousemove', getMousePos);
+    }, [dom, dataKey]);
+    return { pos, data };
+};
+
+/**
+ * dataURL转File对象
+ * @param {string} dataurl  base64
+ * @param {string} filename 文件名
+ * @returns {File} File对象
+ */
+function dataURLtoFile(dataurl, filename) {
+    // 获取到base64编码
+    const arr = dataurl.split(',');
+    // 将base64编码转为字符串
+    const bstr = window.atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n); // 创建初始化为0的，包含length个元素的无符号整型数组
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, {
+        type: 'image/png'
+    });
+}
+
+/**
+ * 延迟执行函数
+ * @param {number} ms 毫秒数
+ * @returns {Promise}
+ */
+function delay(ms) {
+    return new Promise(resolve => setTimeout(() => {
+        resolve(undefined);
+    }, ms));
+}
+
+function isFileLike(target) {
+    return typeof target === 'object' &amp;&amp; (!!target.name || !!target.type || !!target.size);
+}
+class LoadImageError extends Error {
+    constructor(message, event) {
+        super(message);
+        this.event = event;
+    }
+}
+/**
+ * 加载img对象
+ * @param {string | FileLike} url url 或 类文件对象
+ * @returns {Promise&lt;HTMLImageElement>}
+ */
+async function loadImage(url) {
+    let src;
+    if (isFileLike(url)) {
+        src = URL.createObjectURL(url);
+    }
+    else {
+        src = url;
+    }
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = e => {
+            const error = new LoadImageError(`load ${url} fail`, e);
+            reject(error);
+        };
+        img.src = src;
+    });
+}
+
+/**
+ * 选择文件
+ * @template FileSuffix
+ * @param {Object?} options 选项
+ * @param {FileSuffix[]?} options.types 文件后缀
+ * @param {boolean?} options.folder 是否支持选文件夹
+ * @param {boolean?} options.multiple 是否支持多选
+ * @returns {Promise&lt;File[]>} 文件对象
+ */
+function selectFiles(options) {
+    const _options = options !== null &amp;&amp; options !== void 0 ? options : {};
+    const { types, folder = false, multiple = false } = _options;
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.style.display = 'none';
+    if (types) {
+        fileInput.accept = types.map(e => `.${e}`).join(', ');
+    }
+    if (multiple) {
+        fileInput.multiple = multiple;
+    }
+    if (folder) {
+        Object.assign(fileInput, {
+            webkitdirectory: true
+        });
+    }
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    return new Promise(resolve => {
+        let cancel = null;
+        // eslint-disable-next-line prefer-const
+        let confirm;
+        let unbind = () => {
+            if (cancel) {
+                window.removeEventListener('focus', cancel);
+            }
+            fileInput.removeEventListener('change', confirm);
+            document.body.removeChild(fileInput);
+            unbind = null;
+        };
+        cancel = async () => {
+            await delay(2000);
+            unbind === null || unbind === void 0 ? void 0 : unbind();
+        };
+        confirm = async () => {
+            var _a;
+            resolve(Array.from((_a = fileInput.files) !== null &amp;&amp; _a !== void 0 ? _a : []));
+            unbind === null || unbind === void 0 ? void 0 : unbind();
+        };
+        if (cancel) {
+            window.addEventListener('focus', cancel);
+        }
+        fileInput.addEventListener('change', confirm);
+    });
+}
+
+/**
+ * 在树的数组中根据id查找元素
+ * @template T
+ * @param {number | string} id 主键
+ * @param {T[]} trees 树的数组
+ * @param {Object} params 参数
+ * @param {string} params.idName 主键名
+ * @param {string} params.childrenName 子元素名
+ * @returns {T} 元素
+ */
+function findItemInTrees(id, trees, params) {
+    const { idName = 'id', childrenName = 'children' } = params;
+    for (const item of trees) {
+        if (Reflect.get(item, idName) === id) {
+            return item;
+        }
+        if (Reflect.get(item, childrenName)) {
+            const res = findItemInTrees(id, Reflect.get(item, childrenName), params);
+            if (res) {
+                return res;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * 美化时间
+ * 小于一分钟：刚刚
+ * 大于一分钟小于一小时：xx分钟前
+ * 大于一小时小于一天：xx小时前
+ * 大于一天小于等于三天：昨天
+ * 大于等于三天显示 MM-DD HH:mm
+ * @param {number} timestamp  时间戳
+ * @param {boolean} isEn 是否英文
+ * @returns {string}
+ */
+function beautifyTime(timestamp, isEn) {
+    const dateTime = new Date(timestamp);
+    const month = dateTime.getMonth() + 1;
+    const day = dateTime.getDate();
+    const hour = dateTime.getHours();
+    let minute = dateTime.getMinutes();
+    if (minute &lt; 10) {
+        minute = `0${minute}`;
+    }
+    const millisecond = dateTime.getTime();
+    const now = new Date();
+    const nowNew = now.getTime();
+    let milliseconds = 0;
+    let timeSpanStr;
+    milliseconds = nowNew - millisecond;
+    if (milliseconds &lt;= 1000 * 60 * 1) {
+        timeSpanStr = isEn ? 'just now' : '刚刚';
+    }
+    else if (1000 * 60 * 1 &lt; milliseconds &amp;&amp; milliseconds &lt;= 1000 * 60 * 60) {
+        timeSpanStr = Math.round(milliseconds / (1000 * 60)) + ' ' + (isEn ? 'minutes ago' : '分钟前');
+    }
+    else if (1000 * 60 * 60 * 1 &lt; milliseconds &amp;&amp; milliseconds &lt;= 1000 * 60 * 60 * 24) {
+        timeSpanStr = Math.round(milliseconds / (1000 * 60 * 60)) + ' ' + (isEn ? 'hours ago' : '小时前');
+    }
+    else if (1000 * 60 * 60 * 24 &lt; milliseconds &amp;&amp; milliseconds &lt;= 1000 * 60 * 60 * 24 * 3) {
+        timeSpanStr = (isEn ? 'yesterday' : '昨天') + ' ' + hour + ':' + minute;
+    }
+    else {
+        timeSpanStr = month + '-' + day + ' ' + hour + ':' + minute;
+    }
+    return timeSpanStr;
+}
+
+exports.beautifyTime = beautifyTime;
+exports.dataURLToFile = dataURLtoFile;
+exports.debounce = debounce_1;
+exports.delay = delay;
+exports.findItemInTrees = findItemInTrees;
+exports.loadImage = loadImage;
+exports.remove = remove;
+exports.resizeWatcher = resizeWatch;
+exports.selectFiles = selectFiles;
+exports.throttle = throttle_1;
+exports.useBottom = useBottom;
+exports.useCreatePortal = useCreatePortal;
+exports.useMousePosition = useMousePosition;
+exports.useScript = useScript;
+exports.useWatchResize = useWatchResize;
+exports.useWindowResize = useWindowResize;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#beautifyTime">beautifyTime</a></li><li><a href="global.html#dataURLtoFile">dataURLtoFile</a></li><li><a href="global.html#debounce">debounce</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#findItemInTrees">findItemInTrees</a></li><li><a href="global.html#loadImage">loadImage</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#resizeWatch">resizeWatch</a></li><li><a href="global.html#selectFiles">selectFiles</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#useBottom">useBottom</a></li><li><a href="global.html#useCreatePortal">useCreatePortal</a></li><li><a href="global.html#useMousePosition">useMousePosition</a></li><li><a href="global.html#useScript">useScript</a></li><li><a href="global.html#useWatchResize">useWatchResize</a></li><li><a href="global.html#useWindowResize">useWindowResize</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sun Mar 20 2022 14:07:39 GMT+0800 (中国标准时间)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
