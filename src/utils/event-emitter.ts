@@ -16,7 +16,7 @@ export class EventEmitter {
     }
     return this
   }
-  emit(type: string, ...rest: Function[]) {
+  emit(type: string, ...rest: unknown[]) {
     const fns = this.events[type]
     if (fns) {
       fns.forEach(cb => {
