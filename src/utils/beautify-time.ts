@@ -9,7 +9,7 @@
  * @param {boolean} isEn 是否英文
  * @returns {string}
  */
-function beautifyTime(timestamp: number, isEn?: boolean) {
+export function beautifyTime(timestamp: number, isEn?: boolean) {
   const dateTime = new Date(timestamp)
   const month = dateTime.getMonth() + 1
   const day = dateTime.getDate()
